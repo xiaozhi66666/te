@@ -1,0 +1,134 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拼图游戏</title>
+    <link href="css/style.css" rel="stylesheet" />
+    <link href="css/image-puzzle.css" rel="stylesheet" />
+    <script src="js/jquery-2.1.1.min.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script src="js/image-puzzle.js"></script>
+    <script src="js/mobile-refresh.js"></script>
+</head>
+<style>
+    /* css/style.css */
+    
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    
+    #collage {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    #playPanel {
+        text-align: center;
+    }
+    
+    #gameArea {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    #sortable {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 0;
+        list-style: none;
+    }
+    
+    #sortable li {
+        margin: 5px;
+        width: 80px !important;
+        height: 80px !important;
+        background-color: #ccc;
+        border: 1px solid #000;
+    }
+    
+    #actualImageBox {
+        margin-top: 20px;
+    }
+    
+    #actualImage {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    .btn {
+        margin: 10px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    
+    #sortable li {
+        width: 100px !important;
+        height: 100px !important;
+    }
+    /* Media queries for mobile devices */
+    
+    @media (max-width: 768px) {
+        #sortable li {
+            width: 80px !important;
+            ;
+            height: 80px !important;
+        }
+        .btn {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+        #collage #sortable {
+            width: 91%;
+        }
+    }
+</style>
+
+<body>
+    <div id="collage">
+        <h2>拼图游戏</h2>
+        <hr />
+        <div id="playPanel">
+            <h3 id="imgTitle">武田人血蛋白包装</h3>
+            <hr />
+            <div id="gameArea">
+                <ul id="sortable" class="sortable"></ul>
+                <div id="actualImageBox">
+                    <div id="stepBox">
+                        <div>Steps:</div>
+                        <div class="stepCount">0</div>
+                    </div>
+                    <div id="timeBox">
+                        Time Taken: <span id="timerPanel"></span> secs
+                    </div>
+                    < img id="actualImage" src="images/lotus-temple.jpg" alt="Actual Image" />
+                    <div>Re-arrange to create a picture like this.</div>
+                    <div>
+                        <button id="btnRule" type="button" class="btn" onclick="rules();">Rules</button>
+                        <button id="btnReplay" type="button" class="btn" onclick="about();">About</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="gameOver" style="display:none;">
+            <div>
+                <h2>游戏结束！！</h2>
+                祝贺您！！您已经完成了这张拼图。<br/> 步骤：共
+                <span class="stepCount">24</span>步。<br/> 耗时：
+                <span class="timeCount">94</span>秒。<br/>
+                <button type="button" onclick="window.location.reload(true);">重新开始</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="js/jquery.ui.touch-punch.min.js">
+</script>
+
+</html>

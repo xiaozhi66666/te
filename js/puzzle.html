@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>一起来拼图</title>
+    <link href="css/style.css" rel="stylesheet" />
+    <link href="css/image-puzzle.css" rel="stylesheet" />
+    <script src="js/jquery-2.1.1.min.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script src="js/image-puzzle.js"></script>
+</head>
+<body>
+    <div id="collage">
+        <h2>一起来拼图</h2>
+        <hr />
+        <div id="playPanel" style="padding:5px;display:none;">
+            <h3 id="imgTitle">武田人血蛋白包装</h3> <!-- 修改图片标题 -->
+            <hr />
+            <div style="display:inline-block; margin:auto; width:95%; vertical-align:top;">
+                <ul id="sortable" class="sortable"></ul>
+                <div id="actualImageBox">
+                    <div id="stepBox">
+                        <div>Steps:</div><div class="stepCount">0</div>
+                    </div>
+                    <div id="timeBox">
+                        Time Taken: <span id="timerPanel"></span> secs
+                    </div>
+                    <img id="actualImage" />
+                    <div>Re-arrange to create a picture like this.</div>
+                    <!-- 移除难度选择 -->
+                    <!-- <p id="levelPanel">
+                        <input type="radio" name="level" id="easy" value="3" /> <label for="easy">Easy</label>
+                        <input type="radio" name="level" id="medium" value="4" checked="checked" /> <label for="medium">Medium</label>
+                        <input type="radio" name="level" id="hard" value="5" /> <label for="hard">Hard</label>
+                    </p> -->
+                    <div>
+                        <button id="btnRule" type="button" class="btn" onclick="rules();">Rules</button>
+                        <button id="btnReplay" type="button" class="btn" onclick="about();">About</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="gameOver" style="display:none;">
+            <div style="background-color: #fc9e9e; padding: 5px 10px 20px 10px; text-align: center; ">
+                <h2 style="text-align:center">游戏结束！！</h2>
+                祝贺您！！<br /> 您已经完成了这张拼图。
+                <br />
+                步骤：共<font class="stepCount">24</font>步。
+                <br />
+                耗时：<font class="timeCount">94</font>秒。<br />
+                <div>
+                    <button type="button" onclick="window.location.reload(true);">重新开始</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // 移除图片数组，因为我们只使用一张图片
+
+            $(function () {
+                // 固定难度为4x4
+                var gridSize = 4;
+                imagePuzzle.startGame(gridSize);
+                
+                // 移除与难度选择相关的代码
+                
+                // 移除Another Photo按钮的事件处理器和按钮本身
+                $('#newPhoto').remove();
+                
+                // 不再需要与图片选择相关的代码
+            });
+
+            function rules() {
+                alert('Re arrange the image parts in a way that it correctly forms the picture. \nThe no. of steps taken will be counted.');
+            }
+            function about() {
+                alert('Developed by Anurag Gandhi. \nHe can be contacted at: soft.gandhi@gmail.com');
+            }
+        </script>
+    </div>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>一起来拼图</title>
+    <style>
+        #collage hr {
+            border: none;
+            border-top: 2px solid #f5f2f2;
+            height: 1px;
+        }
+        
+        #collage #playPanel {
+            background-color: #c2defc;
+            padding: 10px 0px;
+            margin: 10px auto;
+            max-width: 800px;
+            width: 95%;
+        }
+        
+        #collage #actualImageBox {
+            display: inline-block;
+            font-size: 0.8em;
+            margin: 10px 10px;
+            vertical-align: top;
+            width: 100%;
+        }
+        
+        #collage #stepBox,
+        #collage #timeBox {
+            display: inline-block;
+            width: 48%;
+        }
+        
+        #collage #stepBox div {
+            background-color: #c2defc;
+            display: inline-block;
+            padding: 1px 4px;
+            margin: 0px auto;
+            max-width: 800px;
+        }
+        
+        #collage #sortable {
+            border: 2px solid #a46;
+            list-style-type: none;
+            display: inline-block;
+            margin: 10px;
+            padding: 0;
+            width: 100%;
+        }
+        
+        #collage #sortable li {
+            background-size: cover;
+            border: none;
+            cursor: pointer;
+            margin: 0;
+            padding: 0;
+            float: left;
+            width: calc(100% / 4);
+            /* 动态计算每列宽度 */
+            height: calc(100% / 4);
+            /* 动态计算每行高度 */
+        }
+        
+        #collage button {
+            background-color: #f5f2f2;
+            border: 1px solid #cce;
+            display: inline;
+            font-size: 14px;
+            height: auto;
+            width: auto;
+            padding: 3px 8px;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Calibri, Arial;
+            margin: 0;
+        }
+        
+        h2 {
+            font-weight: normal;
+            text-align: center;
+        }
+        
+        h3 {
+            font-weight: normal;
+            margin: 3px 0px;
+            text-align: center;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+    <script>
+        var timerFunction;
+
+        var imagePuzzle = {
+            stepCount: 0,
+            startTime: new Date().getTime(),
+            startGame: function(gridSize) {
+                this.setImage(gridSize);
+                $('#playPanel').show();
+                this.enableSwapping('#sortable li');
+                this.stepCount = 0;
+                this.startTime = new Date().getTime();
+                this.tick();
+            },
+            tick: function() {
+                var now = new Date().getTime();
+                var elapsedTime = parseInt((now - imagePuzzle.startTime) / 1000, 10);
+                $('#timerPanel').text(elapsedTime);
+                timerFunction = setTimeout(imagePuzzle.tick, 1000);
+            },
+            enableSwapping: function(elem) {
+                var mc = new Hammer(elem[0]);
+                mc.get('pan').set({
+                    direction: Hammer.DIRECTION_ALL
+                });
+                mc.on('panstart', function(ev) {
+                    ev.target.style.transition = 'none';
+                    var initialX = ev.center.x;
+                    var initialY = ev.center.y;
+                });
+                mc.on('panmove', function(ev) {
+                    ev.target.style.transform = `translate(${ev.deltaX}px, ${ev.deltaY}px)`;
+                });
+                mc.on('panend', function(ev) {
+                    var droppedOn = document.elementFromPoint(ev.center.x, ev.center.y);
+                    if (droppedOn && droppedOn.classList.contains('item')) {
+                        var temp = ev.target.cloneNode(true);
+                        ev.target.parentNode.insertBefore(temp, droppedOn);
+                        ev.target.parentNode.replaceChild(droppedOn, ev.target);
+                        ev.target.parentNode.replaceChild(ev.target, temp);
+                    }
+                    ev.target.style.transition = 'transform 0.2s ease-out';
+                    ev.target.style.transform = '';
+                });
+            },
+            setImage: function(gridSize) {
+                console.log(gridSize);
+                gridSize = gridSize || 4;
+                console.log(gridSize);
+                var image = {
+                    src: 'images/lotus-temple.jpg',
+                    title: '武田人血蛋白包装'
+                };
+                $('#imgTitle').html(image.title);
+                $('#sortable').empty();
+                var columns = Math.ceil($('#sortable').width() / 100); // 假设每个块的宽度大约为100px
+                for (var i = 0; i < gridSize * columns; i++) {
+                    var xpos = (100 * (i % columns)) / columns + '%';
+                    var ypos = (100 * Math.floor(i / columns)) / columns + '%';
+                    var li = $('<li class="item" data-value="' + (i) + '"></li>').css({
+                        'background-image': 'url(' + image.src + ')',
+                        'background-size': (columns * 100) + '%',
+                        'background-position': xpos + ' ' + ypos,
+                        'width': 100 / columns + '%',
+                        'height': 100 / columns + '%'
+                    });
+                    $('#sortable').append(li);
+                }
+                $('#sortable').randomize();
+            }
+        };
+
+        function isSorted(arr) {
+            for (var i = 0; i < arr.length - 1; i++) {
+                if (arr[i] != i)
+                    return false;
+            }
+            return true;
+        }
+
+        $.fn.randomize = function(selector) {
+            var $elems = selector ? $(this).find(selector) : $(this).children(),
+                $parents = $elems.parent();
+
+            $parents.each(function() {
+                $(this).children(selector).sort(function() {
+                    return Math.round(Math.random()) - 0.5;
+                }).remove().appendTo(this);
+            });
+            return this;
+        };
+
+        $(function() {
+            var gridSize = 4;
+            imagePuzzle.startGame(gridSize);
+        });
+
+        function rules() {
+            alert('Re arrange the image parts in a way that it correctly forms the picture. \nThe no. of steps taken will be counted.');
+        }
+
+        function about() {
+            alert('Developed by Anurag Gandhi. \nHe can be contacted at: soft.gandhi@gmail.com');
+        }
+    </script>
+</head>
+
+<body>
+    <div id="collage">
+        <h2>一起来拼图</h2>
+        <hr />
+        <div id="playPanel" style="padding:5px;display:none;">
+            <h3 id="imgTitle">武田人血蛋白包装</h3>
+            <hr />
+            <div style="display:inline-block; margin:auto; width:95%; vertical-align:top;">
+                <ul id="sortable" class="sortable"></ul>
+                <div id="actualImageBox">
+                    <div id="stepBox">
+                        <div>Steps:</div>
+                        <div class="stepCount">0</div>
+                    </div>
+                    <div id="timeBox">
+                        Time Taken: <span id="timerPanel"></span> secs
+                    </div>
+                    <div>Re-arrange to create a picture like this.</div>
+                    <div>
+                        <button id="btnRule" type="button" class="btn" onclick="rules();">Rules</button>
+                        <button id="btnReplay" type="button" class="btn" onclick="about();">About</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="gameOver" style="display:none;">
+            <div style="background-color: #fc9e9e; padding: 5px 10px 20px 10px; text-align: center; ">
+                <h2 style="text-align:center">游戏结束！！</h2>
+                祝贺您！！<br /> 您已经完成了这张拼图。
+                <br /> 步骤：共
+                <font class="stepCount">24</font>步。
+                <br /> 耗时：
+                <font class="timeCount">94</font>秒。<br />
+                <div>
+                    <button type="button" onclick="window.location.reload(true);">重新开始</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
